@@ -1,6 +1,6 @@
 #import "@preview/tidy:0.4.3"
 #import "@preview/codly:1.3.0": *
-#import "@preview/codly-languages:0.1.1": *
+#import "@preview/codly-languages:0.1.10": *
 #import "pi-games.typ": *
 
 #show: codly-init.with()
@@ -17,8 +17,25 @@
   show regex(",\\s"): math.class("punctuation", ",")
   it
 }
+// Bold table headers
+#show table.cell.where(y: 0): set text(weight: "bold")
+
+// Academic-style table borders
+#let frame(stroke) = (x, y) => (
+    left: 0pt,
+    right: 0pt,
+    top: if y == 0 { stroke + 0.5pt } else if y == 1 { stroke } else { 0pt },
+    bottom: stroke + 0.5pt,
+  )
+
+#set table(
+    fill: (_, y) => if calc.odd(y) { gray.lighten(80%) },
+    stroke: frame(black),
+  )
+
 #set par(first-line-indent: 0pt, justify: true)
 #set page(numbering: "1")
+#set heading(numbering: "1.1")
 #set document(
   title: [pi-games: Normal-Form Games in Typst],
   author: "Piotr Kuszewski",
@@ -36,8 +53,8 @@
 
 The `pi-games` library provides two Typst functions for typesetting _normal-form_ (strategic-form) games of the kind common in game theory courses and research:
 
-/ `normal-form-game`: draws a two-player N×M payoff matrix. Each cell displays both players' payoffs separated by a comma, coloured by player.
-/ `three-player-normal-form-game`: draws a three-player game as a collection of N×M matrices — one per strategy of Player 3 — laid out in rows.
+/ `game-normal-form`: draws a two-player N×M payoff matrix. Each cell displays both players' payoffs separated by a comma, coloured by player.
+/ `game-three-player-normal-form`: draws a three-player game as a collection of N×M matrices — one per strategy of Player 3 — laid out in rows.
 
 Both functions are built on the `@preview/cetz` drawing package. They measure content at layout time and automatically size each cell to fit its widest payoff expression or strategy label, so the typesetter never needs to specify column widths by hand.
 
@@ -47,7 +64,7 @@ Import the library at the top of your document:
 #import "pi-games.typ": *
 ```
 
-= `normal-form-game`
+= `game-normal-form`
 
 == Payoff Array Structure
 
@@ -66,16 +83,16 @@ payoffs: (
 
 Cell width is determined automatically at render time as the maximum of three quantities:
 
-+ *`cell_width`*: the user-supplied lower bound (default `5em`).
++ *`cell-width`*: the user-supplied lower bound (defaults to `game-cell-width`, initially `5em`).
 + *Strategy-label width*: the rendered width of the widest Player 2 strategy label plus `2em` of horizontal padding. This ensures each column is never narrower than its header.
 + *Payoff width*: the rendered width of the widest payoff pair `v1, v2` — including best-response underlines where active — plus `2em` of padding.
 
-The measurement happens inside a `context` block, so it uses the exact font metrics of every piece of content, including mathematical formulas of arbitrary complexity. The *left margin* (Player 1 strategy labels and rotated player name) is auto-sized to the widest Player 1 label; the *top margin* (Player 2 strategy labels and player name) is auto-sized to the tallest Player 2 label. *Cell height* is fixed at `cell_height` (default `2em`) and is not auto-sized, since all payoff content is placed on a single line.
+The measurement happens inside a `context` block, so it uses the exact font metrics of every piece of content, including mathematical formulas of arbitrary complexity. The *left margin* (Player 1 strategy labels and rotated player name) is auto-sized to the widest Player 1 label; the *top margin* (Player 2 strategy labels and player name) is auto-sized to the tallest Player 2 label. *Cell height* is fixed at `cell-height` (defaults to `game-cell-height`, initially `2em`) and is not auto-sized, since all payoff content is placed on a single line.
 
 == Best Responses and Nash Equilibria
 
-- *`p1-best` / `p2-best`*: arrays of `(row, col)` tuples. In each listed cell the respective player's payoff is underlined with a 1 pt stroke in their colour.
-- *`nash`*: array of `(row, col)` tuples. A coloured rectangle (`nash-color`, default `teal`) is drawn just inside the cell border.
+- *`p1-best` / `p2-best`*: arrays of `(row, col)` tuples. In each listed cell the respective player's payoff is underlined with a 1 pt stroke in their colour (`game-pal.at(0)` and `game-pal.at(1)`).
+- *`nash`*: array of `(row, col)` tuples. A coloured rectangle in `game-nash-color` is drawn just inside the cell border.
 
 Both underlines and Nash rectangles are taken into account when auto-sizing, so highlighting never causes payoffs to overflow their cells.
 
@@ -86,7 +103,7 @@ Both underlines and Nash rectangles are taken into account when auto-sizing, so 
 The Prisoner's Dilemma is the textbook example of a dominant-strategy equilibrium. Defection strictly dominates Cooperation for both players, so $(D,D)$ is the unique Nash equilibrium even though $(C,C)$ Pareto-dominates it.
 
 ```typst
-#normal-form-game(
+#game-normal-form(
   [Prisoner 1], [Prisoner 2],
   ([C], [D]),
   ([C], [D]),
@@ -100,7 +117,7 @@ The Prisoner's Dilemma is the textbook example of a dominant-strategy equilibriu
 )
 ```
 
-#align(center, normal-form-game(
+#align(center, game-normal-form(
   [Prisoner 1], [Prisoner 2],
   ([C], [D]),
   ([C], [D]),
@@ -118,7 +135,7 @@ The Prisoner's Dilemma is the textbook example of a dominant-strategy equilibriu
 In the Battle of Sexes the players want to coordinate but disagree on which outcome to coordinate on. There are two pure-strategy Nash equilibria — both choose Opera, or both choose Football — and a mixed-strategy equilibrium in between.
 
 ```typst
-#normal-form-game(
+#game-normal-form(
   [She], [He],
   ([Opera], [Football]),
   ([Opera], [Football]),
@@ -132,7 +149,7 @@ In the Battle of Sexes the players want to coordinate but disagree on which outc
 )
 ```
 
-#align(center, normal-form-game(
+#align(center, game-normal-form(
   [She], [He],
   ([Opera], [Football]),
   ([Opera], [Football]),
@@ -150,7 +167,7 @@ In the Battle of Sexes the players want to coordinate but disagree on which outc
 Strategy labels are arbitrary Typst content, so mixed-strategy equilibrium probabilities can be embedded directly in the label. Matching Pennies has no pure-strategy Nash equilibrium; the unique Nash equilibrium requires each player to play Heads with probability $p^* = q^* = 1/2$. Including $[p]$ and $[q]$ in the strategy names makes the equilibrium condition explicit. The column width auto-adjusts to accommodate the wider labels.
 
 ```typst
-#normal-form-game(
+#game-normal-form(
   [P1], [P2],
   ([H #h(1mm) $[p]$],     [T #h(1mm) $[1-p]$]),
   ([H $[q]$], [T $[1-q]$]),
@@ -161,7 +178,7 @@ Strategy labels are arbitrary Typst content, so mixed-strategy equilibrium proba
 )
 ```
 
-#align(center, normal-form-game(
+#align(center, game-normal-form(
   [P1], [P2],
   ([$[p]$ #h(1mm) H],     [$[1-p]$ #h(1mm) T]),
   ([$[q]$\ H], [$[1-q]$\ T]),
@@ -176,7 +193,7 @@ Strategy labels are arbitrary Typst content, so mixed-strategy equilibrium proba
 Payoff values may contain mathematical variables and expressions of any complexity. Auto-sizing measures the actual rendered width of each expression to determine the cell size. The symmetric 3×3 coordination game has payoff $a$ when players match and $b$ otherwise; all three pure-strategy Nash equilibria $(A,A)$, $(B,B)$, $(C,C)$ exist for any $a > b$.
 
 ```typst
-#normal-form-game(
+#game-normal-form(
   [P1], [P2],
   ([A], [B], [C]),
   ([A], [B], [C]),
@@ -191,7 +208,7 @@ Payoff values may contain mathematical variables and expressions of any complexi
 )
 ```
 
-#align(center, normal-form-game(
+#align(center, game-normal-form(
   [P1], [P2],
   ([A], [B], [C]),
   ([A], [B], [C]),
@@ -205,7 +222,7 @@ Payoff values may contain mathematical variables and expressions of any complexi
   nash:    ((0, 0), (1, 1), (2, 2)),
 ))
 
-= `three-player-normal-form-game`
+= `game-three-player-normal-form`
 
 == Payoff Array Structure
 
@@ -245,7 +262,7 @@ Above each sub-matrix (from bottom to top): Player 2's strategy labels, then Pla
 All three players must cooperate to catch the stag (payoff 3). A player who deviates and hunts the hare alone gets 1; players who pursue the stag without all partners cooperating get 0. Hunting hare is always safe, so $(H,H,H)$ is always a Nash equilibrium; $(S,S,S)$ is the other.
 
 ```typst
-#three-player-normal-form-game(
+#game-three-player-normal-form(
   [P1], [P2], [P3],
   ([S], [H]),
   ([S], [H]),
@@ -269,7 +286,7 @@ All three players must cooperate to catch the stag (payoff 3). A player who devi
 )
 ```
 
-#align(center, three-player-normal-form-game(
+#align(center, game-three-player-normal-form(
   [P1], [P2], [P3],
   ([S], [H]),
   ([S], [H]),
@@ -290,6 +307,35 @@ All three players must cooperate to catch the stag (payoff 3). A player who devi
   p3-best: ((0,0,0), (1,0,1), (1,1,0), (1,1,1)),
 ))
 
+= Global Configuration
+
+All constants are ordinary `let` bindings. Override them by redefining the binding _after_ importing the library:
+
+```typst
+#import "pi-games.typ": *
+#let game-pal = (        // custom player colours
+  rgb("#005f73"), rgb("#94d2bd"), rgb("#e9d8a6"),
+  rgb("#ee9b00"), rgb("#ae2012"),
+)
+#let game-nash-color = rgb("#ff6b6b")   // custom Nash highlight
+#let game-fg         = rgb("#222222")   // custom foreground
+#let game-cell-width  = 6em            // wider cells
+#let game-cell-height = 2.5em          // taller cells
+#let game-games-per-row = 3            // three sub-matrices per row
+```
+
+#table(
+  columns: (auto, auto, 2fr),
+  table.header([Name], [Default], [Role]),
+  [`game-pal`],           [5-colour list],   [Player colours (index 0 = Player 1, 1 = Player 2, 2 = Player 3).],
+  [`game-nash-color`],    [`rgb("#22c4c7")`],[Nash equilibrium cell outline colour.],
+  [`game-fg`],            [`rgb("#111111")`],[Cell borders, comma separators, and punctuation.],
+  [`game-cell-width`],    [`5em`],           [Minimum payoff cell width; auto-grown to fit content.],
+  [`game-cell-height`],   [`2em`],           [Fixed payoff cell height; increase for multi-line content.],
+  [`game-games-per-row`], [`2`],             [Maximum sub-matrices per row in three-player games.],
+)
+
+#set heading(numbering: none)
 = API Reference
 
 #let docs = tidy.parse-module(read("pi-games.typ"), name: none)

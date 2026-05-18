@@ -5,7 +5,6 @@
 //   #import "pi-game-palette.typ": *
 
 // ── Player colours ────────────────────────────────────────────────
-
 /// Per-player colour palette. Index 0 = Player 1, index 4 = Player 5.
 /// Used by `pi-game-trees` and `pi-games` as the single source of truth
 /// for player colours across all representation formats.
@@ -30,7 +29,7 @@
 /// Colour for Nash equilibrium cell outlines in normal-form game tables.
 #let pi-nash-color = rgb("#22c4c7")
 
-/// Default colour for equilibrium-path overlays in game trees (`gtree-highlight`).
+/// Default colour for equilibrium-path overlays in game trees (`game-highlight`).
 #let pi-highlight-color = rgb("#e53e3e")
 
 // ── Auxiliary colours ─────────────────────────────────────────────

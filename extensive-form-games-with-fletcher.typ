@@ -7,7 +7,7 @@
 #show: codly-init.with()
 #codly(languages: codly-languages)
 // Games
-#import "pi-games.typ": *
+// #import "pi-games.typ": *
 #import "pi-games-fletcher.typ": *
 // Basic setup
 #set page(numbering: "1")
@@ -25,7 +25,7 @@ Piotr Kuszewski, May 2026
 
 
 = Introduction
-The goal of this short note is to summarize how to draw extensive form games in `fletcher`. First, we develop a simple drawing style and methodology using basic `fletcher` constructs. After that, we investigate how to add extra elements to extensive form games drawn with `fletcher` in Typst. Finally, we will try to replicate games from the `xgames` LaTeX package and other widely used packages for drawing extensive form games. We will also try to replicate the style used in _The Course in Game Theory_ by Martin J. Osborne and Ariel Rubinstein.
+The goal of this short note is to summarize how to draw extensive form games in `fletcher`. First, we develop a simple drawing style and methodology using basic `fletcher` constructs. After that, we investigate how to add extra elements to extensive form games drawn with `fletcher` in Typst.
 
 
 = Extensive form games with `fletcher`
@@ -33,11 +33,11 @@ The goal of this short note is to summarize how to draw extensive form games in 
 == Some extra setup
 
 ```typst
-#let pi_thick_red_arrow = (stroke: 2pt + red, 
+#let pi-thick-red-arrow = (stroke: 2pt + red, 
     marks: (none, (inherit: ">", size: 1.5)))
-#let pi_thick_blue_arrow = (stroke: 2pt + blue, 
+#let pi-thick-blue-arrow = (stroke: 2pt + blue, 
     marks: (none, (inherit: ">", size: 1.5)))
-#let pi_label_inside = (label-fill: true, label-anchor: "center")
+#let pi-label-inside = (label-fill: true, label-anchor: "center")
 ```
 
 == Examples
@@ -215,32 +215,32 @@ The goal of this short note is to summarize how to draw extensive form games in 
 #diagram(
     spacing: (8mm, 10mm),
     node((3.5, 0), [*A*]),
-    edge((0.5, 2), "->", [X], ..pi_label_inside),
-    edge((2.5, 2), "->", [Y], ..pi_label_inside),
-    edge((5.5, 1), "->", [Z], ..pi_label_inside),
+    edge((0.5, 2), "->", [X], ..pi-label-inside),
+    edge((2.5, 2), "->", [Y], ..pi-label-inside),
+    edge((5.5, 1), "->", [Z], ..pi-label-inside),
     node((0.5, 2), [*B*]),
     edge(((2.5, 2)), "dashed"),
-    edge((0, 3), "->", label: "L", ..pi_label_inside),
-    edge((1, 3), "->", label: "R", ..pi_label_inside),
+    edge((0, 3), "->", label: "L", ..pi-label-inside),
+    edge((1, 3), "->", label: "R", ..pi-label-inside),
     node((0, 3), [(3, 1)]),
     node((1, 3), [(0, 0)]),
     node((2.5, 2), [*B*]),
     edge(((4.5, 2)), "dashed"),
-    edge((2, 3), "->", label: "L", ..pi_label_inside),
-    edge((3, 3), "->", label: "R", ..pi_label_inside),
+    edge((2, 3), "->", label: "L", ..pi-label-inside),
+    edge((3, 3), "->", label: "R", ..pi-label-inside),
     node((2, 3), [(3, 1)]),
     node((3, 3), [(0,0)]),
     node((5.5, 1), [*Los*]),
-    edge((4.5,2), "->", [1/2], ..pi_label_inside),
-    edge((6.5,2), "->", [1/2], ..pi_label_inside),
+    edge((4.5,2), "->", [1/2], ..pi-label-inside),
+    edge((6.5,2), "->", [1/2], ..pi-label-inside),
     node((4.5, 2), [*B*]),
-    edge((4, 3), "->", label: "L", ..pi_label_inside),
-    edge((5, 3), "->", label: "R", ..pi_label_inside),
+    edge((4, 3), "->", label: "L", ..pi-label-inside),
+    edge((5, 3), "->", label: "R", ..pi-label-inside),
     node((4, 3), [(0, 0)]),
     node((5, 3), [(1, 3)]),
     node((6.5, 2), [*B*]),
-    edge((6, 3), "->", label: "L", ..pi_label_inside),
-    edge((7, 3), "->", label: "R", ..pi_label_inside),
+    edge((6, 3), "->", label: "L", ..pi-label-inside),
+    edge((7, 3), "->", label: "R", ..pi-label-inside),
     node((6, 3), [(0, 0)]),
     node((7, 3), [(1, 3)]),
 )
@@ -251,38 +251,38 @@ The goal of this short note is to summarize how to draw extensive form games in 
         spacing: (8mm, 10mm),
 
         node((3.5, 0), [*A*]),
-        edge((0.5, 2), "->", [X], ..pi_label_inside),
-        edge((2.5, 2), "->", [Y], ..pi_label_inside),
-        edge((5.5, 1), "->", [Z], ..pi_label_inside),
+        edge((0.5, 2), "->", [X], ..pi-label-inside),
+        edge((2.5, 2), "->", [Y], ..pi-label-inside),
+        edge((5.5, 1), "->", [Z], ..pi-label-inside),
 
         node((0.5, 2), [*B*]),
         edge(((2.5, 2)), "dashed"),
-        edge((0, 3), "->", label: "L", ..pi_label_inside),
-        edge((1, 3), "->", label: "R", ..pi_label_inside),
+        edge((0, 3), "->", label: "L", ..pi-label-inside),
+        edge((1, 3), "->", label: "R", ..pi-label-inside),
         node((0, 3), [(3, 1)]),
         node((1, 3), [(0, 0)]),
 
         node((2.5, 2), [*B*]),
         edge(((4.5, 2)), "dashed"),
-        edge((2, 3), "->", label: "L", ..pi_label_inside),
-        edge((3, 3), "->", label: "R", ..pi_label_inside),
+        edge((2, 3), "->", label: "L", ..pi-label-inside),
+        edge((3, 3), "->", label: "R", ..pi-label-inside),
         node((2, 3), [(3, 1)]),
         node((3, 3), [(0,0)]),
 
 
         node((5.5, 1), [*Los*]),
-        edge((4.5,2), "->", [1/2], ..pi_label_inside),
-        edge((6.5,2), "->", [1/2], ..pi_label_inside),
+        edge((4.5,2), "->", [1/2], ..pi-label-inside),
+        edge((6.5,2), "->", [1/2], ..pi-label-inside),
 
         node((4.5, 2), [*B*]),
-        edge((4, 3), "->", label: "L", ..pi_label_inside),
-        edge((5, 3), "->", label: "R", ..pi_label_inside),
+        edge((4, 3), "->", label: "L", ..pi-label-inside),
+        edge((5, 3), "->", label: "R", ..pi-label-inside),
         node((4, 3), [(0, 0)]),
         node((5, 3), [(1, 3)]),
 
         node((6.5, 2), [*B*]),
-        edge((6, 3), "->", label: "L", ..pi_label_inside),
-        edge((7, 3), "->", label: "R", ..pi_label_inside),
+        edge((6, 3), "->", label: "L", ..pi-label-inside),
+        edge((7, 3), "->", label: "R", ..pi-label-inside),
         node((6, 3), [(0, 0)]),
         node((7, 3), [(1, 3)]),
     )
@@ -303,19 +303,19 @@ The goal of this short note is to summarize how to draw extensive form games in 
     edge((2,-1), "->", label: [K]),
     edge((2,1), "->", label: [P]),
     node((-2,-1), [*B*]),
-    edge((-3,-2), "->", label: [M], ..pi_label_inside ),
-    edge((-1,-2), "->", label: [$not$M], ..pi_label_inside),
+    edge((-3,-2), "->", label: [M], ..pi-label-inside ),
+    edge((-1,-2), "->", label: [$not$M], ..pi-label-inside),
     edge((2,-1), "dashed"),
     node((-2,1), [*B*]),
-    edge((-3,2), "->", label: [M], ..pi_label_inside),
-    edge((-1,2), "->", label: [$not$M], ..pi_label_inside),
+    edge((-3,2), "->", label: [M], ..pi-label-inside),
+    edge((-1,2), "->", label: [$not$M], ..pi-label-inside),
     edge((2,1), "dashed"),
     node((2,-1), [*B*]),
-    edge((3,-2), "->", label: [M],..pi_label_inside),
-    edge((1,-2), "->", label: [$not$M],..pi_label_inside),
+    edge((3,-2), "->", label: [M],..pi-label-inside),
+    edge((1,-2), "->", label: [$not$M],..pi-label-inside),
     node((2,1), [*B*]),
-    edge((3,2), "->", label: [M], ..pi_label_inside),
-    edge((1,2), "->", label: [$not$M], ..pi_label_inside),
+    edge((3,2), "->", label: [M], ..pi-label-inside),
+    edge((1,2), "->", label: [$not$M], ..pi-label-inside),
     node((-3,-2), [(3, 0)]),
     node((-1,-2), [(1, 1)]),
     node((1,-2), [(0, 0)]),
@@ -331,50 +331,50 @@ The goal of this short note is to summarize how to draw extensive form games in 
     #diagram(
         spacing: (10mm, 10mm),
 
-        // Natura — środek poziomej kreski H
+        // Nature — centre of the horizontal bar of H
         node((0,0), [*Los*]),
         edge((-2,0), "->", label: [$p$]),
         edge((2,0), "->", label: [$1-p$]),
 
-        // Spolegliwy — środek lewej pionowej kreski H
+        // Cooperative type (S) — centre of the left vertical bar of H
         node((-2,0), [*S*]),
         edge((-2,-1), "->", label: [K]),
         edge((-2,1), "->", label: [P]),
 
-        // Niepokorny — środek prawej pionowej kreski H
+        // Stubborn type (N) — centre of the right vertical bar of H
         node((2,0), [*N*]),
         edge((2,-1), "->", label: [K]),
         edge((2,1), "->", label: [P]),
 
-        // Bufetowa — górny lewy róg H (S zamówił K)
+        // Receiver (B) — top-left corner of H (S ordered K)
         node((-2,-1), [*B*]),
-        edge((-3,-2), "->", label: [M], ..pi_label_inside ),
-        edge((-1,-2), "->", label: [$not$M], ..pi_label_inside),
+        edge((-3,-2), "->", label: [M], ..pi-label-inside ),
+        edge((-1,-2), "->", label: [$not$M], ..pi-label-inside),
         edge((2,-1), "dashed"),
 
-        // Bufetowa — dolny lewy róg H (S zamówił P)
+        // Receiver (B) — bottom-left corner of H (S ordered P)
         node((-2,1), [*B*]),
-        edge((-3,2), "->", label: [M], ..pi_label_inside),
-        edge((-1,2), "->", label: [$not$M], ..pi_label_inside),
+        edge((-3,2), "->", label: [M], ..pi-label-inside),
+        edge((-1,2), "->", label: [$not$M], ..pi-label-inside),
         edge((2,1), "dashed"),
 
-        // Bufetowa — górny prawy róg H (N zamówił K)
+        // Receiver (B) — top-right corner of H (N ordered K)
         node((2,-1), [*B*]),
-        edge((3,-2), "->", label: [M],..pi_label_inside),
-        edge((1,-2), "->", label: [$not$M],..pi_label_inside),
+        edge((3,-2), "->", label: [M],..pi-label-inside),
+        edge((1,-2), "->", label: [$not$M],..pi-label-inside),
 
-        // Bufetowa — dolny prawy róg H (N zamówił P)
+        // Receiver (B) — bottom-right corner of H (N ordered P)
         node((2,1), [*B*]),
-        edge((3,2), "->", label: [M], ..pi_label_inside),
-        edge((1,2), "->", label: [$not$M], ..pi_label_inside),
+        edge((3,2), "->", label: [M], ..pi-label-inside),
+        edge((1,2), "->", label: [$not$M], ..pi-label-inside),
 
-        // Wypłaty — góra (zamówiono K; wychodzą ponad H)
+        // Payoffs — top (K ordered; extend above H)
         node((-3,-2), [(3, 0)]),
         node((-1,-2), [(1, 1)]),
         node((1,-2), [(0, 0)]),
         node((3,-2), [(2, 1)]),
 
-        // Wypłaty — dół (zamówiono P; wychodzą poniżej H)
+        // Payoffs — bottom (P ordered; extend below H)
         node((-3,2), [(2, 0)]),
         node((-1,2), [(0, 1)]),
         node((1,2), [(1, 0)]),
@@ -388,14 +388,14 @@ The goal of this short note is to summarize how to draw extensive form games in 
 #diagram(
     spacing: (6mm, 15mm),
     node((0,0), text(fill: blue)[*A*]),
-    edge((-2,1), ..pi_thick_blue_arrow, label: [K]),
+    edge((-2,1), ..pi-thick-blue-arrow, label: [K]),
     edge((2,1), "->", label: [T], ),
     node((-2,1),text(fill: red)[*B*]),
-    edge((-3,2), ..pi_thick_red_arrow, label: [K]),
+    edge((-3,2), ..pi-thick-red-arrow, label: [K]),
     edge((-1,2), "->", label: [T]),
     node((2,1), text(fill: red)[*B*]),
     edge((1,2), "->", label: [K]),
-    edge((3,2), ..pi_thick_red_arrow, label: [T]),
+    edge((3,2), ..pi-thick-red-arrow, label: [T]),
     node((-3,2), [(3, 1)]),
     node((-1,2), [(0, 0)]),
     node((3,2), [(1, 3)]),
@@ -407,16 +407,16 @@ The goal of this short note is to summarize how to draw extensive form games in 
     #diagram(
         spacing: (6mm, 15mm),
         node((0,0), text(fill: blue)[*A*]),
-        edge((-2,1), ..pi_thick_blue_arrow, label: [K]),
+        edge((-2,1), ..pi-thick-blue-arrow, label: [K]),
         edge((2,1), "->", label: [T], ),
 
         node((-2,1),text(fill: red)[*B*]),
-        edge((-3,2), ..pi_thick_red_arrow, label: [K]),
+        edge((-3,2), ..pi-thick-red-arrow, label: [K]),
         edge((-1,2), "->", label: [T]),
 
         node((2,1), text(fill: red)[*B*]),
         edge((1,2), "->", label: [K]),
-        edge((3,2), ..pi_thick_red_arrow, label: [T]),
+        edge((3,2), ..pi-thick-red-arrow, label: [T]),
 
 
         node((-3,2), [(3, 1)]),
@@ -426,39 +426,3 @@ The goal of this short note is to summarize how to draw extensive form games in 
         node((1,2), [(0, 0)]),
     )
 ]
-
-Open issues:
-- information sets,
-- randomization along some edges (triangle, pie shape?)
-
-== Replicating other extensive games drawing styles
-
-#align(center)[
-    #cetz.canvas(
-        length: 15mm,
-        {
-        import cetz.draw: *
-        line((0,0), (-2,-1))
-        line((0,0), (2,-1))
-        line((-2,-1),(-3,-2))
-        line((-2,-1),(-1,-2))
-        line((2,-1),(1,-2))
-        line((2,-1),(3,-2))
-
-        circle((0,0), radius: 1mm, fill: white)
-        circle((-2,-1), radius: 1mm, fill: black)
-        circle((2,-1), radius: 1mm, fill: black)
-
-        circle((3,-2), radius: 1mm, fill: black)
-        circle((1,-2), radius: 1mm, fill: black)
-        circle((3,-2), radius: 1mm, fill: black)
-        circle((-3,-2), radius: 1mm, fill: black)
-        circle((1,-2), radius: 1mm, fill: black)
-        circle((-1,-2), radius: 1mm, fill: black)
-
-        content((0,0), [A], anchor: "south-east", padding: 0.5em)
-        content((-2,-1), [B], anchor: "south-east", padding: 0.5em)
-        content((2,-1), [B], anchor: "south-west", padding: 0.5em)
-    })
-]
-

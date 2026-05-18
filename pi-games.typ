@@ -1,11 +1,43 @@
-#import "@preview/cetz:0.5.2"
+#import "@preview/cetz:0.5.2" as cetz
 #import "pi-game-palette.typ": *
+
+// ── Colour palette ────────────────────────────────────────────────
+
+/// Per-player colour palette. Index 0 = Player 1, index 1 = Player 2, index 2 = Player 3.
+/// Defaults to `pi-player-colors` from `pi-game-palette`.
+/// Override after import: `#let game-pal = (rgb("…"), …)`.
+#let game-pal = pi-player-colors
+
+/// Colour for Nash equilibrium cell outlines.
+/// Defaults to `pi-nash-color` from `pi-game-palette`.
+/// Override after import: `#let game-nash-color = rgb("…")`.
+#let game-nash-color = pi-nash-color
+
+/// Foreground colour for cell borders, comma separators, and punctuation.
+/// Defaults to `pi-fg` from `pi-game-palette`.
+/// Override after import: `#let game-fg = rgb("…")`.
+#let game-fg = pi-fg
+
+// ── Geometry defaults ─────────────────────────────────────────────
+
+/// Minimum cell width for payoff matrix columns [length].
+/// The actual width is auto-grown to fit the widest payoff or strategy label.
+/// Override after import: `#let game-cell-width = 6em`.
+#let game-cell-width = 5em
+
+/// Fixed cell height for payoff matrix rows [length].
+/// Override after import: `#let game-cell-height = 3em`.
+#let game-cell-height = 2em
+
+/// Maximum number of sub-matrices placed side by side in three-player games [int].
+/// Override after import: `#let game-games-per-row = 3`.
+#let game-games-per-row = 2
 
 /// Draws a general N×M normal form game table with colored payoffs,
 /// best-response underlines, and Nash equilibrium highlights.
 ///
 /// -> content
-#let normal-form-game(
+#let game-normal-form(
   /// Name of the row player, displayed rotated 90° on the left side of the matrix.
   /// Accepts any Typst content, e.g. `[Alice]` or `[$P_1$]`. -> content
   p1,
@@ -30,49 +62,48 @@
   /// )
   /// ```
   payoffs,
-  /// Color applied to Player 1's name and payoff values. -> color
-  p1-color: pi-player-colors.at(0),
-  /// Color applied to Player 2's name and payoff values. -> color
-  p2-color: pi-player-colors.at(1),
-  /// Color of the rectangle drawn around Nash equilibrium cells. -> color
-  nash-color: pi-nash-color,
   /// Array of `(row, col)` tuples identifying cells where Player 1 plays a best
-  /// response. Player 1's payoff in those cells is underlined in `p1-color`.
+  /// response. Player 1's payoff in those cells is underlined in `game-pal.at(0)`.
   p1-best: (),
   /// Array of `(row, col)` tuples identifying cells where Player 2 plays a best
-  /// response. Player 2's payoff in those cells is underlined in `p2-color`.
+  /// response. Player 2's payoff in those cells is underlined in `game-pal.at(1)`.
   p2-best: (),
   /// Array of `(row, col)` tuples of Nash equilibrium cells.
-  /// A rectangle in `nash-color` is drawn just inside the cell border.
+  /// A rectangle in `game-nash-color` is drawn just inside the cell border.
   nash: (),
   /// Minimum cell width. The actual width is the maximum of this value, the widest
   /// Player 2 strategy label width plus `2em`, and the widest payoff pair width
-  /// plus `2em`. Increase to enforce a larger minimum regardless of content. -> length
-  cell_width: 5em,
+  /// plus `2em`. Increase to enforce a larger minimum regardless of content.
+  /// Defaults to `game-cell-width`. -> length
+  cell-width: game-cell-width,
   /// Fixed cell height. Content is placed at the cell centre; this value is not
-  /// auto-sized, so increase it when payoffs span multiple lines. -> length
-  cell_height: 2em,
+  /// auto-sized, so increase it when payoffs span multiple lines.
+  /// Defaults to `game-cell-height`. -> length
+  cell-height: game-cell-height,
 ) = context {
   cetz.canvas({
     import cetz.draw: *
 
-    let max-width(strings) = {
+    let max-w(strings) = {
       strings.fold(0pt, (acc, s) => {
         let w = measure(text(s)).width
         if w > acc { w } else { acc }
       })
     }
 
-    let max-height(strings) = {
+    let max-h(strings) = {
       strings.fold(0pt, (acc, s) => {
         let w = measure(text(s)).height
         if w > acc { w } else { acc }
       })
     }
-  
+
+    let p1-color = game-pal.at(0)
+    let p2-color = game-pal.at(1)
+
     let rows = s1.len()
     let cols = s2.len()
-    
+
     // Geometry settings
     let max-payoff-width = range(rows).map(r =>
       range(cols).map(c => {
@@ -81,63 +112,54 @@
         let v2 = pay.at(1)
         let sv1 = if (r, c) in p1-best { underline(stroke: p1-color + 1pt, v1) } else { v1 }
         let sv2 = if (r, c) in p2-best { underline(stroke: p2-color + 1pt, v2) } else { v2 }
-        measure([#text(fill: p1-color, sv1)#text(fill: pi-fg)[, ]#text(fill: p2-color, sv2)]).width
+        measure([#text(fill: p1-color, sv1)#text(fill: game-fg)[, ]#text(fill: p2-color, sv2)]).width
       })
     ).flatten().fold(0pt, (acc, w) => if w > acc { w } else { acc })
-    let w = calc.max(cell_width.to-absolute(), max-width(s2).to-absolute() + (2em).to-absolute(), max-payoff-width + (2em).to-absolute())
-    let h = cell_height.to-absolute() // Cell height
-    let w_sep = calc.max(max-width(s1).to-absolute() + (2em).to-absolute())
-    let h_sep = calc.max(max-height(s2).to-absolute() + (1em).to-absolute())
+    let w = calc.max(cell-width.to-absolute(), max-w(s2).to-absolute() + (2em).to-absolute(), max-payoff-width + (2em).to-absolute())
+    let h = cell-height.to-absolute()
+    let w-sep = calc.max(max-w(s1).to-absolute() + (2em).to-absolute())
+    let h-sep = calc.max(max-h(s2).to-absolute() + (1em).to-absolute())
 
-    // Draw The Grid and Payoffs
+    // Draw the grid and payoffs
     for r in range(rows) {
       for c in range(cols) {
         let x = c * w
         let y = -r * h
-        
-        // Draw Cell Border
+
         rect((x, y), (x + w, y - h), stroke: 0.5pt)
 
-        // Extract Payoffs
         let pay = payoffs.at(r).at(c)
         let v1 = pay.at(0)
         let v2 = pay.at(1)
 
-        // Draw Nash equilibrium if applicable
         if (r, c) in nash {
-           // circle((x + w/2, y - h/2), radius: (w*0.35, h*0.4), stroke: 2pt + gray)
-           rect((x + (0.3em).to-absolute(), y - (0.3em).to-absolute()), (x + w - (0.3em).to-absolute(), y - h + (0.3em).to-absolute()), stroke: 1pt + nash-color)
+          rect((x + (0.3em).to-absolute(), y - (0.3em).to-absolute()), (x + w - (0.3em).to-absolute(), y - h + (0.3em).to-absolute()), stroke: 1pt + game-nash-color)
         }
 
-        // Determine Styles (Underline if Best Response)
         let style-v1 = if (r, c) in p1-best { underline(stroke: p1-color + 1pt, v1) } else { v1 }
         let style-v2 = if (r, c) in p2-best { underline(stroke: p2-color + 1pt, v2) } else { v2 }
 
-        // Construct Content string with colors
-        let cell-content = [
-            #text(fill: p1-color, style-v1)#text(fill: pi-fg)[, ]#text(fill: p2-color, style-v2)
-        ]
-
-        // Place Payoff Text
-        content((x + w/2, y - h/2), cell-content)
+        content((x + w/2, y - h/2), [
+          #text(fill: p1-color, style-v1)#text(fill: game-fg)[, ]#text(fill: p2-color, style-v2)
+        ])
       }
     }
 
-    // Draw Strategies (Row Player / Left)
+    // Draw strategies (row player / left)
     for (i, strat) in s1.enumerate() {
-       content((-1em, -i*h - h/2), strat, anchor: "east")
+      content((-1em, -i*h - h/2), strat, anchor: "east")
     }
 
-    // Draw Strategies (Column Player / Top)
+    // Draw strategies (column player / top)
     for (i, strat) in s2.enumerate() {
-       content((i*w + w/2, 0.5em), align(center)[#strat], anchor: "base")
+      content((i*w + w/2, 0.5em), align(center)[#strat], anchor: "base")
     }
 
-    // Draw Player 2 (horizontal) name above strategies, centered above columns
-    content((w*cols/2, h_sep), text(fill: p2-color, weight: "bold", align(center)[#p2]), anchor: "base") 
+    // Player 2 name above columns
+    content((w*cols/2, h-sep), text(fill: p2-color, weight: "bold", align(center)[#p2]), anchor: "base")
 
-    // Draw Player 1 (vertical) name to the left of strategies, centered left of rows
-    content((-w_sep, -h*rows/2), text(fill: p1-color, weight: "bold", align(center)[#p1]), angle: 90deg, anchor: "base" ) 
+    // Player 1 name left of rows (rotated)
+    content((-w-sep, -h*rows/2), text(fill: p1-color, weight: "bold", align(center)[#p1]), angle: 90deg, anchor: "base")
   })
 }
 
@@ -147,7 +169,7 @@
 /// are shown in each cell. Strategy labels of Player 3 appear above each sub-matrix.
 ///
 /// -> content
-#let three-player-normal-form-game(
+#let game-three-player-normal-form(
   /// Name of the row player (Player 1), displayed rotated 90° to the left of each
   /// row of sub-matrices. -> content
   p1,
@@ -170,35 +192,30 @@
   /// `k` is the Player 3 strategy index (outermost), `r` the row (Player 1),
   /// `c` the column (Player 2). All three values are Typst content.
   payoffs,
-  /// Color applied to Player 1's name and payoff values. -> color
-  p1-color: pi-player-colors.at(0),
-  /// Color applied to Player 2's name and payoff values. -> color
-  p2-color: pi-player-colors.at(1),
-  /// Color applied to Player 3's name, strategy labels, and payoff values. -> color
-  p3-color: pi-player-colors.at(2),
-  /// Color of the rectangle drawn inside Nash equilibrium cells. -> color
-  nash-color: pi-nash-color,
   /// Array of `(k, row, col)` tuples where Player 1 plays a best response.
-  /// Player 1's payoff is underlined in `p1-color` at those cells.
+  /// Player 1's payoff is underlined in `game-pal.at(0)` at those cells.
   p1-best: (),
   /// Array of `(k, row, col)` tuples where Player 2 plays a best response.
-  /// Player 2's payoff is underlined in `p2-color` at those cells.
+  /// Player 2's payoff is underlined in `game-pal.at(1)` at those cells.
   p2-best: (),
   /// Array of `(k, row, col)` tuples where Player 3 plays a best response.
-  /// Player 3's payoff is underlined in `p3-color` at those cells.
+  /// Player 3's payoff is underlined in `game-pal.at(2)` at those cells.
   p3-best: (),
   /// Array of `(k, row, col)` tuples of Nash equilibrium cells.
-  /// A rectangle in `nash-color` is drawn inside those cells.
+  /// A rectangle in `game-nash-color` is drawn inside those cells.
   nash: (),
   /// Minimum cell width, auto-grown to fit the widest payoff triple or Player 2
-  /// strategy label across all sub-matrices. -> length
-  cell_width: 5em,
-  /// Fixed cell height. Increase when payoff content spans multiple lines. -> length
-  cell_height: 2em,
+  /// strategy label across all sub-matrices.
+  /// Defaults to `game-cell-width`. -> length
+  cell-width: game-cell-width,
+  /// Fixed cell height. Increase when payoff content spans multiple lines.
+  /// Defaults to `game-cell-height`. -> length
+  cell-height: game-cell-height,
   /// Maximum number of sub-matrices placed side by side. If Player 3 has more
   /// strategies than this, additional rows of sub-matrices are added below.
-  /// A lone sub-matrix in the last row is horizontally centred. -> int
-  games-per-row: 2,
+  /// A lone sub-matrix in the last row is horizontally centred.
+  /// Defaults to `game-games-per-row`. -> int
+  games-per-row: game-games-per-row,
 ) = context {
   cetz.canvas({
     import cetz.draw: *
@@ -211,6 +228,10 @@
       let hh = measure(text(s)).height
       if hh > acc { hh } else { acc }
     })
+
+    let p1-color = game-pal.at(0)
+    let p2-color = game-pal.at(1)
+    let p3-color = game-pal.at(2)
 
     let rows = s1.len()
     let cols = s2.len()
@@ -227,30 +248,29 @@
           let sv1 = if (k, r, c) in p1-best { underline(stroke: p1-color + 1pt, v1) } else { v1 }
           let sv2 = if (k, r, c) in p2-best { underline(stroke: p2-color + 1pt, v2) } else { v2 }
           let sv3 = if (k, r, c) in p3-best { underline(stroke: p3-color + 1pt, v3) } else { v3 }
-          measure([#text(fill: p1-color, sv1)#text(fill: pi-fg)[, ]#text(fill: p2-color, sv2)#text(fill: pi-fg)[, ]#text(fill: p3-color, sv3)]).width
+          measure([#text(fill: p1-color, sv1)#text(fill: game-fg)[, ]#text(fill: p2-color, sv2)#text(fill: game-fg)[, ]#text(fill: p3-color, sv3)]).width
         })
       )
     ).flatten().fold(0pt, (acc, ww) => if ww > acc { ww } else { acc })
 
-    let w      = calc.max(cell_width.to-absolute(), max-w(s2).to-absolute() + (2em).to-absolute(), max-payoff-w + (2em).to-absolute())
-    let h      = cell_height.to-absolute()
+    let w      = calc.max(cell-width.to-absolute(), max-w(s2).to-absolute() + (2em).to-absolute(), max-payoff-w + (2em).to-absolute())
+    let h      = cell-height.to-absolute()
     let gw     = cols * w
     let gh     = rows * h
-    let w_sep  = max-w(s1).to-absolute() + (2em).to-absolute()
-    let h_sep  = max-h(s2).to-absolute() + (1em).to-absolute()   // space for P2 strats + P2 name
-    let h_p3   = max-h(s3).to-absolute() + (1em).to-absolute()   // space for P3 strategy label
-    let h_above = h_sep + h_p3                                    // total label height above each grid
-    let gap_x  = (3em).to-absolute()
-    let gap_y  = (2em).to-absolute()
-    let row_step = gh + h_above + gap_y
+    let w-sep  = max-w(s1).to-absolute() + (2em).to-absolute()
+    let h-sep  = max-h(s2).to-absolute() + (1em).to-absolute()
+    let h-p3   = max-h(s3).to-absolute() + (1em).to-absolute()
+    let h-above = h-sep + h-p3
+    let gap-x  = (3em).to-absolute()
+    let gap-y  = (2em).to-absolute()
+    let row-step = gh + h-above + gap-y
 
     for (k, strat3) in s3.enumerate() {
       let gc = calc.rem(k, games-per-row)
       let gr = int(k / games-per-row)
-      // Center a lone sub-matrix in the last row
       let lone-last = calc.rem(n3, games-per-row) == 1 and gr == int((n3 - 1) / games-per-row)
-      let ox = if lone-last { (games-per-row - 1) * (gw + gap_x) / 2 } else { gc * (gw + gap_x) }
-      let oy = -(gr * row_step)
+      let ox = if lone-last { (games-per-row - 1) * (gw + gap-x) / 2 } else { gc * (gw + gap-x) }
+      let oy = -(gr * row-step)
 
       // Grid cells
       for r in range(rows) {
@@ -269,7 +289,7 @@
             rect(
               (x + (0.3em).to-absolute(), y - (0.3em).to-absolute()),
               (x + w - (0.3em).to-absolute(), y - h + (0.3em).to-absolute()),
-              stroke: 1pt + nash-color
+              stroke: 1pt + game-nash-color
             )
           }
 
@@ -279,7 +299,7 @@
 
           content(
             (x + w/2, y - h/2),
-            [#text(fill: p1-color, sv1)#text(fill: pi-fg)[, ]#text(fill: p2-color, sv2)#text(fill: pi-fg)[, ]#text(fill: p3-color, sv3)]
+            [#text(fill: p1-color, sv1)#text(fill: game-fg)[, ]#text(fill: p2-color, sv2)#text(fill: game-fg)[, ]#text(fill: p3-color, sv3)]
           )
         }
       }
@@ -291,14 +311,14 @@
 
       // P2 player name
       content(
-        (ox + gw/2, oy + h_sep),
+        (ox + gw/2, oy + h-sep),
         text(fill: p2-color, weight: "bold", align(center)[#p2]),
         anchor: "base"
       )
 
       // P3 strategy label (above P2 name)
       content(
-        (ox + gw/2, oy + h_above),
+        (ox + gw/2, oy + h-above),
         text(fill: p3-color, weight: "bold", align(center)[#strat3]),
         anchor: "base"
       )
@@ -309,7 +329,7 @@
           content((ox - 1em, oy - i*h - h/2), strat, anchor: "east")
         }
         content(
-          (ox - w_sep, oy - gh/2),
+          (ox - w-sep, oy - gh/2),
           text(fill: p1-color, weight: "bold", align(center)[#p1]),
           angle: 90deg,
           anchor: "base"
@@ -317,10 +337,10 @@
       }
     }
 
-    // P3 player name once, centered over the full row width (matches lone-game centering)
-    let top_w = games-per-row * gw + (games-per-row - 1) * gap_x
+    // P3 player name once, centered over the full row width
+    let top-w = games-per-row * gw + (games-per-row - 1) * gap-x
     content(
-      (top_w / 2, h_above + (1.5em).to-absolute()),
+      (top-w / 2, h-above + (1.5em).to-absolute()),
       text(fill: p3-color, weight: "bold")[#p3],
       anchor: "base"
     )

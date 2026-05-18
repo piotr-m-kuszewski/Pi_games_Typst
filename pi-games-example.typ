@@ -1,8 +1,13 @@
+// pi-games-example.typ — Usage examples for the pi-games normal-form game library
+// SGH Warsaw School of Economics · dr Piotr Kuszewski
+//
+// Compile with: typst compile pi-games-example.typ
+
 #import "pi-games.typ": *
 
 // ── 1. Prisoner's Dilemma ────────────────────────────────────────────────────
 
-#normal-form-game(
+#game-normal-form(
   [Prisoner 1], [Prisoner 2],
   ([C], [D]),
   ([C], [D]),
@@ -17,7 +22,7 @@
 
 // ── 2. Battle of Sexes ───────────────────────────────────────────────────────
 
-#normal-form-game(
+#game-normal-form(
   [She], [He],
   ([Opera], [Football]),
   ([Opera], [Football]),
@@ -32,7 +37,7 @@
 
 // ── 3. Matching Pennies with probabilities in strategy labels ─────────────────
 
-#normal-form-game(
+#game-normal-form(
   [P1], [P2],
   ([$[p]$ #h(1mm) H],     [$[1-p]$ #h(1mm) T]),
   ([$[q]$\ H], [$[1-q]$\ T]),
@@ -44,7 +49,7 @@
 
 // ── 4. 3×3 Coordination Game with parametric payoffs ─────────────────────────
 
-#normal-form-game(
+#game-normal-form(
   [P1], [P2],
   ([A], [B], [C]),
   ([A], [B], [C]),
@@ -53,14 +58,12 @@
     (([$b$], [$b$]), ([$a$], [$a$]), ([$b$], [$b$])),
     (([$b$], [$b$]), ([$b$], [$b$]), ([$a$], [$a$])),
   ),
-  p1-best: ((0, 0), (1, 1), (2, 2)),
-  p2-best: ((0, 0), (1, 1), (2, 2)),
   nash:    ((0, 0), (1, 1), (2, 2)),
 )
 
 // ── 5. Three-Player Stag Hunt ────────────────────────────────────────────────
 
-#three-player-normal-form-game(
+#game-three-player-normal-form(
   [P1], [P2], [P3],
   ([S], [H]),
   ([S], [H]),

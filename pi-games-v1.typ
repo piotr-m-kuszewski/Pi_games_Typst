@@ -1,5 +1,4 @@
-#import "@preview/cetz:0.5.2"
-#import "pi-game-palette.typ": *
+#import "@preview/cetz:0.4.2"
 
 /// Draws a general N×M normal form game table with colored payoffs,
 /// best-response underlines, and Nash equilibrium highlights.
@@ -31,11 +30,11 @@
   /// ```
   payoffs,
   /// Color applied to Player 1's name and payoff values. -> color
-  p1-color: pi-player-colors.at(0),
+  p1-color: blue,
   /// Color applied to Player 2's name and payoff values. -> color
-  p2-color: pi-player-colors.at(1),
+  p2-color: red,
   /// Color of the rectangle drawn around Nash equilibrium cells. -> color
-  nash-color: pi-nash-color,
+  nash-color: teal,
   /// Array of `(row, col)` tuples identifying cells where Player 1 plays a best
   /// response. Player 1's payoff in those cells is underlined in `p1-color`.
   p1-best: (),
@@ -81,7 +80,7 @@
         let v2 = pay.at(1)
         let sv1 = if (r, c) in p1-best { underline(stroke: p1-color + 1pt, v1) } else { v1 }
         let sv2 = if (r, c) in p2-best { underline(stroke: p2-color + 1pt, v2) } else { v2 }
-        measure([#text(fill: p1-color, sv1)#text(fill: pi-fg)[, ]#text(fill: p2-color, sv2)]).width
+        measure([#text(fill: p1-color, sv1)#text(fill: black)[, ]#text(fill: p2-color, sv2)]).width
       })
     ).flatten().fold(0pt, (acc, w) => if w > acc { w } else { acc })
     let w = calc.max(cell_width.to-absolute(), max-width(s2).to-absolute() + (2em).to-absolute(), max-payoff-width + (2em).to-absolute())
@@ -115,7 +114,7 @@
 
         // Construct Content string with colors
         let cell-content = [
-            #text(fill: p1-color, style-v1)#text(fill: pi-fg)[, ]#text(fill: p2-color, style-v2)
+            #text(fill: p1-color, style-v1)#text(fill: black)[, ]#text(fill: p2-color, style-v2)
         ]
 
         // Place Payoff Text
@@ -171,13 +170,13 @@
   /// `c` the column (Player 2). All three values are Typst content.
   payoffs,
   /// Color applied to Player 1's name and payoff values. -> color
-  p1-color: pi-player-colors.at(0),
+  p1-color: blue,
   /// Color applied to Player 2's name and payoff values. -> color
-  p2-color: pi-player-colors.at(1),
+  p2-color: red,
   /// Color applied to Player 3's name, strategy labels, and payoff values. -> color
-  p3-color: pi-player-colors.at(2),
+  p3-color: green,
   /// Color of the rectangle drawn inside Nash equilibrium cells. -> color
-  nash-color: pi-nash-color,
+  nash-color: teal,
   /// Array of `(k, row, col)` tuples where Player 1 plays a best response.
   /// Player 1's payoff is underlined in `p1-color` at those cells.
   p1-best: (),
@@ -227,7 +226,7 @@
           let sv1 = if (k, r, c) in p1-best { underline(stroke: p1-color + 1pt, v1) } else { v1 }
           let sv2 = if (k, r, c) in p2-best { underline(stroke: p2-color + 1pt, v2) } else { v2 }
           let sv3 = if (k, r, c) in p3-best { underline(stroke: p3-color + 1pt, v3) } else { v3 }
-          measure([#text(fill: p1-color, sv1)#text(fill: pi-fg)[, ]#text(fill: p2-color, sv2)#text(fill: pi-fg)[, ]#text(fill: p3-color, sv3)]).width
+          measure([#text(fill: p1-color, sv1)#text(fill: black)[, ]#text(fill: p2-color, sv2)#text(fill: black)[, ]#text(fill: p3-color, sv3)]).width
         })
       )
     ).flatten().fold(0pt, (acc, ww) => if ww > acc { ww } else { acc })
@@ -279,7 +278,7 @@
 
           content(
             (x + w/2, y - h/2),
-            [#text(fill: p1-color, sv1)#text(fill: pi-fg)[, ]#text(fill: p2-color, sv2)#text(fill: pi-fg)[, ]#text(fill: p3-color, sv3)]
+            [#text(fill: p1-color, sv1)#text(fill: black)[, ]#text(fill: p2-color, sv2)#text(fill: black)[, ]#text(fill: p3-color, sv3)]
           )
         }
       }

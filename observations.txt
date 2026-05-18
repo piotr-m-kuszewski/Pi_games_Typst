@@ -1,0 +1,2 @@
+- In "Battle of Sexes" football label is way to close – how is it anchored. 
+- Alignment of action labels is not made on baseline, so you get misalignment between labels with different "heights".

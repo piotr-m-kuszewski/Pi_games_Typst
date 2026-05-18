@@ -1,6 +1,6 @@
 # $\pi$-games for Typst
 
-Typst libraries for drawing strategic and extensive form games, developed at SGH Warsaw School of Economics by dr Piotr Kuszewski.
+Typst libraries for drawing strategic and extensive form games.
 
 ## Libraries
 

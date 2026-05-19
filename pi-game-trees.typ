@@ -1,5 +1,5 @@
 // pi-game-trees.typ — Extensive-form game tree macros for CeTZ 0.5.2
-// SGH Warsaw School of Economics · dr Piotr Kuszewski
+// Piotr Kuszewski · SGH Warsaw School of Economics
 //
 // Inspired by the xgames LaTeX package (B. Bernard, 2025).
 //
@@ -139,7 +139,6 @@
 // Return `(name: n)` dict when n is not none; else empty dict.
 #let _gname(n) = if n != none { (name: n) } else { (:) }
 
-
 // ── game-node ────────────────────────────────────────────────────
 /// Draw a decision (non-terminal) node for a given player.
 #let game-node(
@@ -185,7 +184,6 @@
   }
 }
 
-
 // ── game-nature ──────────────────────────────────────────────────
 /// Draw a Nature / chance node (grey filled circle).
 #let game-nature(
@@ -215,7 +213,6 @@
     )
   }
 }
-
 
 // ── game-terminal ────────────────────────────────────────────────
 /// Draw a terminal node (small filled dot) with a coloured payoff vector.
@@ -250,7 +247,6 @@
     content(lp, lbl, anchor: _gA.at(la, default: "north"))
   }
 }
-
 
 // ── game-branch ──────────────────────────────────────────────────
 /// Draw a branch (edge) from a parent node to a child node, with an optional action label.
@@ -318,7 +314,6 @@
     }
   }
 }
-
 
 // ── game-infoset ─────────────────────────────────────────────────
 /// Draw an information set connecting two or more decision nodes.
@@ -482,7 +477,6 @@
   }
 }
 
-
 // ── game-prob ────────────────────────────────────────────────────
 /// Place a probability label on a Nature branch. Wrapper around `game-branch` with `player: 0`.
 #let game-prob(
@@ -504,7 +498,6 @@
 ) = {
   game-branch(from, to, action: action, player: 0, side: side, act: act, apos: apos, arrow: arrow)
 }
-
 
 // ── game-subgame ─────────────────────────────────────────────────
 /// Draw a proper-subgame triangle marker (dotted, lightly filled, apex at the root).
@@ -533,7 +526,6 @@
   }
 }
 
-
 // ── game-highlight ───────────────────────────────────────────────
 /// Draw a bold coloured overlay on an existing branch to mark an equilibrium path.
 #let game-highlight(
@@ -555,7 +547,6 @@
   )
 }
 
-
 // ── game-payoffs ─────────────────────────────────────────────────
 /// Build a coloured inline payoff vector for body text or math. Each payoff is coloured by player.
 /// -> content
@@ -571,7 +562,6 @@
   let inner = items.join(text(fill: game-fg, [, ]))
   if parens { [(#inner)] } else { inner }
 }
-
 
 // ── game-player ──────────────────────────────────────────────────
 /// Typeset arbitrary content in a player's colour (bold).

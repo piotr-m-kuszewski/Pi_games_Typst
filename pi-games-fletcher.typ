@@ -1,5 +1,5 @@
 // pi-games-fletcher.typ — Arrow style presets for fletcher diagrams
-// SGH Warsaw School of Economics · dr Piotr Kuszewski
+// Piotr Kuszewski · SGH Warsaw School of Economics
 //
 // Import alongside @preview/fletcher in documents that use fletcher for
 // supplementary diagrams. Not required by pi-games.typ or pi-game-trees.typ.

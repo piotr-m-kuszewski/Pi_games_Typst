@@ -1,5 +1,5 @@
 // pi-games-example.typ — Usage examples for the pi-games normal-form game library
-// SGH Warsaw School of Economics · dr Piotr Kuszewski
+// Piotr Kuszewski · SGH Warsaw School of Economics
 //
 // Compile with: typst compile pi-games-example.typ
 

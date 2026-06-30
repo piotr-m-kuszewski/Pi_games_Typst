@@ -1,9 +1,9 @@
-// pi-game-trees-example.typ  —  Demonstration of extensive-form game tree macros
-// Place pi-game-trees.typ in the same folder and compile with:
-//   typst compile pi-game-trees-example.typ
+// pi-games-trees-example.typ  —  Demonstration of extensive-form game tree macros
+// Place pi-games.typ (and the libraries it bundles) in the same folder and compile with:
+//   typst compile pi-games-trees-example.typ
 
 #import "@preview/cetz:0.5.2" as cetz
-#import "pi-game-trees.typ": *
+#import "@preview/pi-games:0.1.0": *
 
 // Better looking tables
 #show table.cell.where(y: 0): set text(weight: "bold")
@@ -24,11 +24,7 @@
 
 = `pi-game-trees.typ` — Extensive-Form Game Trees in CeTZ
 
-This document demonstrates the `pi-game-trees.typ` macro library for drawing
-extensive-form game trees in Typst using CeTZ 0.5.2.  The visual design
-follows the conventions of the _xgames_ LaTeX package: each player's
-name, action labels, and payoffs are rendered in a dedicated colour for
-clarity.  Unlike xgames, the syntax conforms strictly to Typst and CeTZ
+This document demonstrates the `pi-game-trees.typ` macro library for drawing extensive-form game trees in Typst using CeTZ 0.5.2. The visual design follows the conventions of the _xgames_ LaTeX package: each player's name, action labels, and payoffs are rendered in a dedicated colour for clarity.  Unlike xgames, the syntax conforms strictly to Typst and CeTZ
 conventions.
 
 *Player colours:*\
@@ -48,11 +44,7 @@ conventions.
 
 == Example 1 — Entry Deterrence (Sequential, Perfect Information)
 
-A #game-player(1)[Challenger] decides whether to enter a market.
-If she enters, the #game-player(2)[Incumbent] either _fights_ or
-_accommodates_.  The unique SPNE survives backward induction: the Challenger
-enters, the Incumbent accommodates, yielding payoffs
-#game-payoffs(([1], [1])).
+A #game-player(1)[Challenger] decides whether to enter a market. If she enters, the #game-player(2)[Incumbent] either _fights_ or _accommodates_.  The unique SPNE survives backward induction: the Challenger enters, the Incumbent accommodates, yielding payoffs #game-payoffs(([1], [1])).
 
 #figure(
   cetz.canvas({
@@ -83,8 +75,7 @@ enters, the Incumbent accommodates, yielding payoffs
   caption: [Entry Deterrence — the bold path is the SPNE.]
 )
 
-The highlighted branches show the backward-induction equilibrium:
-#game-player(2)[Incumbent] prefers to accommodate
+The highlighted branches show the backward-induction equilibrium: #game-player(2)[Incumbent] prefers to accommodate
 (payoff $1 > 0$), so #game-player(1)[Challenger] enters.
 
 == Example 2 — Battle of the Sexes (Simultaneous Moves)
@@ -92,8 +83,7 @@ The highlighted branches show the backward-induction equilibrium:
 #game-player(1)[Player 1] moves first in the tree, but
 #game-player(2)[Player 2] does not observe the move — hence
 the two #game-player(2)[Player 2] nodes belong to the same
-*information set* (dashed line).  This makes the game strategically
-equivalent to its normal form.
+*information set* (dashed line).  This makes the game strategically equivalent to its normal form.
 
 #figure(
   cetz.canvas({
@@ -136,9 +126,7 @@ equivalent to its normal form.
 
 == Example 3 — Adverse Selection with Nature
 
-*Nature* draws a buyer's valuation: _Low_ ($theta_L$) with probability
-$1/3$ and _High_ ($theta_H$) with probability $2/3$.
-Only the buyer observes her type; the seller offers a price $p$.
+*Nature* draws a buyer's valuation: _Low_ ($theta_L$) with probability $1/3$ and _High_ ($theta_H$) with probability $2/3$. Only the buyer observes her type; the seller offers a price $p$.
 
 #figure(
   cetz.canvas({
@@ -221,11 +209,9 @@ Only the buyer observes her type; the seller offers a price $p$.
 == Example 4 — Beer–Quiche Signalling Game
 
 The classic Cho–Kreps (1987) signalling game.
-*Nature* draws the #game-player(1)[Sender]'s type: _Strong_ ($S$,
-probability $0.7$) or _Weak_ ($W$, probability $0.3$).
+*Nature* draws the #game-player(1)[Sender]'s type: _Strong_ ($S$, probability $0.7$) or _Weak_ ($W$, probability $0.3$).
 The Sender signals by choosing _Beer_ (B) or _Quiche_ (Q).
-The #game-player(2)[Receiver] observes the signal but not the
-type, then chooses _Fight_ (F) or _Not Fight_ ($not$F).
+The #game-player(2)[Receiver] observes the signal but not the type, then chooses _Fight_ (F) or _Not Fight_ ($not$F).
 Two information sets link nodes reached by the same signal.
 
 #figure(
@@ -279,10 +265,7 @@ Two information sets link nodes reached by the same signal.
 ) <fig-beer-quiche-3>
 
 
-The unique *pooling* Perfect Bayesian Equilibrium has both types choose
-Beer; the Receiver duels after Quiche (off-path belief: Weak).  The
-PBNE payoffs are #game-payoffs(([3],[1])) for Strong and
-#game-payoffs(([2],[0])) for Weak.
+The unique *pooling* Perfect Bayesian Equilibrium has both types choose Beer; the Receiver duels after Quiche (off-path belief: Weak). The PBNE payoffs are #game-payoffs(([3],[1])) for Strong and #game-payoffs(([2],[0])) for Weak.
 
 == Macro Reference
 
@@ -341,8 +324,8 @@ PBNE payoffs are #game-payoffs(([3],[1])) for Strong and
 To override defaults, redefine the `let` bindings *after* importing:
 
 ```typst
-#import "pi-game-trees.typ": *
-#let game-R     = 0.18   // larger nodes
+#import "pi-games.typ": *
+#let game-node-radius     = 0.18   // larger nodes
 #let game-fsl   = 9pt    // bigger player labels
 #let game-pal   = (      // custom colours
   rgb("#005f73"), rgb("#94d2bd"), rgb("#e9d8a6"), …
@@ -352,9 +335,6 @@ To override defaults, redefine the `let` bindings *after* importing:
 === Coordinate Convention
 
 Trees grow *downward*: root at $y = 0$, leaves at $y < 0$.
-Typical level spacing: $Delta y approx -1.8 "cm"$; sibling spacing:
-$Delta x approx 1.5 "cm"$ per level of the tree.
+Typical level spacing: $Delta y approx -1.8 "cm"$; sibling spacing: $Delta x approx 1.5 "cm"$ per level of the tree.
 
-For horizontal trees (growing rightward), rotate the coordinate system
-— set $y$-differences to $0$ and vary $x$, then use `la: "n"` or `la: "s"`
-for action labels instead of `"l"` / `"r"`.
+For horizontal trees (growing rightward), rotate the coordinate system — set $y$-differences to $0$ and vary $x$, then use `la: "n"` or `la: "s"` for action labels instead of `"l"` / `"r"`.

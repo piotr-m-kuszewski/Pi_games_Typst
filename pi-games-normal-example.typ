@@ -1,9 +1,9 @@
-// pi-games-example.typ — Usage examples for the pi-games normal-form game library
+// pi-games-normal-example.typ — Usage examples for the pi-games normal-form game library
 // Piotr Kuszewski · SGH Warsaw School of Economics
 //
-// Compile with: typst compile pi-games-example.typ
+// Compile with: typst compile pi-games-normal-example.typ
 
-#import "pi-games.typ": *
+#import "@preview/pi-games:0.1.0": *
 
 // ── 1. Prisoner's Dilemma ────────────────────────────────────────────────────
 
